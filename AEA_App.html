@@ -1,0 +1,2163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Concierge Services — New Hire Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a0e1a;
+    --navy-mid: #111827;
+    --navy-light: #1a2236;
+    --navy-card: #141c2e;
+    --gold: #c9a84c;
+    --gold-light: #e2c47a;
+    --gold-dim: #8a6f30;
+    --white: #f5f3ee;
+    --white-dim: rgba(245,243,238,0.65);
+    --white-muted: rgba(245,243,238,0.35);
+    --accent-red: #8b2020;
+    --border: rgba(201,168,76,0.2);
+    --border-strong: rgba(201,168,76,0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--navy-card);
+    border-right: 1px solid var(--border);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+  }
+
+  #sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  #sidebar-logo .logo-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+  }
+
+  #sidebar-logo .logo-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: var(--white-muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  #sidebar-logo .session-badge {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  #sidebar-logo .session-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  #nav-list {
+    list-style: none;
+    padding: 16px 0;
+    flex: 1;
+  }
+
+  #nav-list li { position: relative; }
+
+  #nav-list li a {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 24px;
+    text-decoration: none;
+    color: var(--white-dim);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+  }
+
+  #nav-list li a:hover {
+    color: var(--white);
+    background: rgba(201,168,76,0.06);
+    border-left-color: var(--gold-dim);
+  }
+
+  #nav-list li a.active {
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    border-left-color: var(--gold);
+  }
+
+  #nav-list li a .nav-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold-dim);
+    min-width: 20px;
+    padding-top: 1px;
+    letter-spacing: 0.05em;
+  }
+
+  #nav-list li a.active .nav-num { color: var(--gold); }
+
+  #nav-list li a .nav-time {
+    font-size: 10px;
+    color: var(--white-muted);
+    margin-top: 2px;
+    display: block;
+  }
+
+  #sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--white-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  #progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  #progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    border-radius: 1px;
+    transition: width 0.4s ease;
+    width: 10%;
+  }
+
+  /* ── MAIN CONTENT ── */
+  #main {
+    margin-left: 260px;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── MODULE ── */
+  .module {
+    display: none;
+    min-height: 100vh;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .module.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HERO HEADER ── */
+  .module-hero {
+    position: relative;
+    padding: 80px 64px 60px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .module-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 50%;
+    height: 100%;
+    background: radial-gradient(ellipse at top right, rgba(201,168,76,0.07) 0%, transparent 70%);
+  }
+
+  .module-hero .module-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .module-hero .module-tag::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .module-hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--white);
+    max-width: 700px;
+    margin-bottom: 20px;
+  }
+
+  .module-hero h1 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .module-hero .hero-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--white-dim);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  .module-hero .hero-meta {
+    margin-top: 28px;
+    display: flex;
+    gap: 32px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--white-muted);
+    text-transform: uppercase;
+  }
+
+  .module-hero .hero-meta span { display: flex; align-items: center; gap: 8px; }
+  .module-hero .hero-meta span::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+  }
+
+  /* ── CONTENT BODY ── */
+  .module-body {
+    padding: 56px 64px;
+    max-width: 900px;
+  }
+
+  /* ── SECTION HEADING ── */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 12px;
+  }
+
+  h2.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+
+  h3.sub-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  p.body-text {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  /* ── GOLD DIVIDER ── */
+  .gold-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+    margin: 32px 0;
+  }
+
+  /* ── PRINCIPLE CARD ── */
+  .principle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .principle-card {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .principle-card:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-2px);
+  }
+
+  .principle-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--gold);
+  }
+
+  .principle-card .card-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 600;
+    color: var(--gold);
+    opacity: 0.15;
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    line-height: 1;
+  }
+
+  .principle-card h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .principle-card p {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.7;
+  }
+
+  /* ── QUOTE BLOCK ── */
+  .quote-block {
+    border-left: 3px solid var(--gold);
+    padding: 24px 32px;
+    margin: 32px 0;
+    background: rgba(201,168,76,0.05);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .quote-block blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .quote-block cite {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    font-style: normal;
+  }
+
+  /* ── STANDARD BOX ── */
+  .standard-box {
+    background: var(--navy-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+
+  .standard-box .std-header {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .standard-list {
+    list-style: none;
+  }
+
+  .standard-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(245,243,238,0.06);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.6;
+  }
+
+  .standard-list li:last-child { border-bottom: none; }
+
+  .standard-list li::before {
+    content: '—';
+    color: var(--gold);
+    font-size: 12px;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── COMPARISON BLOCK ── */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin: 24px 0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .comp-col {
+    padding: 28px 24px;
+  }
+
+  .comp-col.bad {
+    background: rgba(139,32,32,0.15);
+    border: 1px solid rgba(139,32,32,0.3);
+  }
+
+  .comp-col.good {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--border);
+  }
+
+  .comp-col .comp-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .comp-col.bad .comp-label { color: #c05050; }
+  .comp-col.good .comp-label { color: var(--gold); }
+
+  .comp-col ul { list-style: none; }
+  .comp-col ul li {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--white-dim);
+    padding: 6px 0;
+    line-height: 1.6;
+  }
+
+  /* ── SCENARIO CARD ── */
+  .scenario-card {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin: 24px 0;
+    overflow: hidden;
+  }
+
+  .scenario-header {
+    background: rgba(201,168,76,0.1);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .scenario-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--navy);
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  .scenario-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  .scenario-body {
+    padding: 24px;
+  }
+
+  .scenario-body .situation {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.7;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+    border-left: 2px solid var(--gold-dim);
+  }
+
+  .scenario-body .think-prompt {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+  }
+
+  /* ── REFLECTION INPUT ── */
+  .reflect-block {
+    background: rgba(201,168,76,0.04);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin: 32px 0;
+  }
+
+  .reflect-block .reflect-prompt {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .reflect-block textarea {
+    width: 100%;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 14px 16px;
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .reflect-block textarea::placeholder { color: var(--white-muted); }
+  .reflect-block textarea:focus { border-color: var(--gold-dim); }
+
+  .reflect-block .reflect-hint {
+    font-size: 11px;
+    color: var(--white-muted);
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── EDO METHOD ── */
+  .edo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin: 24px 0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .edo-col {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    padding: 28px 20px;
+    text-align: center;
+    position: relative;
+  }
+
+  .edo-col .edo-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .edo-col .edo-word {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .edo-col .edo-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.6;
+  }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+
+  .callout .callout-icon {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .callout p {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.7;
+  }
+
+  /* ── STEP LIST ── */
+  .step-list {
+    list-style: none;
+    counter-reset: step;
+    margin: 24px 0;
+  }
+
+  .step-list li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(245,243,238,0.06);
+  }
+
+  .step-list li:last-child { border-bottom: none; }
+
+  .step-list li::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--gold-dim);
+    line-height: 1;
+    min-width: 36px;
+  }
+
+  .step-list li .step-content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .step-list li .step-content p {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── POLICY ROW ── */
+  .policy-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+
+  .policy-label {
+    background: var(--navy-light);
+    padding: 14px 20px;
+    min-width: 180px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+
+  .policy-value {
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  /* ── SYSTEM CARD ── */
+  .system-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 16px 0;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+
+  .system-card:hover { border-color: var(--gold-dim); }
+
+  .system-card .sys-icon {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    color: var(--gold);
+    min-width: 40px;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .system-card .sys-content h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .system-card .sys-content p {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--white-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .system-card .sys-priority {
+    margin-top: 8px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+
+  /* ── LEADERSHIP STATEMENT ── */
+  .leader-statement {
+    position: relative;
+    padding: 48px 40px;
+    text-align: center;
+    margin: 40px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .leader-statement::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120px;
+    color: var(--gold);
+    opacity: 0.1;
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    line-height: 1;
+  }
+
+  .leader-statement p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.5;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ── CLOSING / COMMITMENT ── */
+  .commitment-block {
+    background: linear-gradient(135deg, var(--navy-card), var(--navy-light));
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 48px;
+    text-align: center;
+    margin: 40px 0;
+  }
+
+  .commitment-block h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+  }
+
+  .commitment-block p {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--white-dim);
+    max-width: 480px;
+    margin: 0 auto 28px;
+    line-height: 1.7;
+  }
+
+  .commitment-input {
+    background: var(--navy);
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    color: var(--white);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    text-align: center;
+    padding: 14px 20px;
+    width: 100%;
+    max-width: 380px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+    display: block;
+    margin: 0 auto 16px;
+  }
+
+  .commitment-input::placeholder { color: var(--white-muted); }
+  .commitment-input:focus { border-color: var(--gold); }
+
+  /* ── NAV BUTTONS ── */
+  .module-nav {
+    padding: 40px 64px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    max-width: 900px;
+  }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    border-radius: 2px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--white-dim);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--gold-dim);
+    color: var(--white);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── OPENING MODULE SPECIAL ── */
+  #module-0 .module-hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(160deg, var(--navy) 60%, rgba(201,168,76,0.06) 100%);
+    padding: 80px 64px;
+  }
+
+  #module-0 .module-hero h1 {
+    font-size: clamp(48px, 6vw, 84px);
+  }
+
+  .opening-crest {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    color: var(--gold);
+    opacity: 0.3;
+    margin-bottom: 32px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── BREAK MODULE ── */
+  #module-5 .module-hero {
+    background: linear-gradient(135deg, var(--navy-card), var(--navy));
+    text-align: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 50vh;
+  }
+
+  /* ── MOBILE TOGGLE ── */
+  #sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 200;
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 768px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    #sidebar-toggle { display: flex; }
+    .module-hero { padding: 60px 24px 40px; }
+    .module-body { padding: 40px 24px; }
+    .module-nav { padding: 32px 24px 48px; }
+    .comparison-grid { grid-template-columns: 1fr; }
+    .edo-grid { grid-template-columns: 1fr; }
+    .principle-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── HIGHLIGHT TEXT ── */
+  .highlight { color: var(--gold-light); }
+  .highlight-red { color: #e07070; }
+
+  /* ── SMALL CAPS TAG ── */
+  .tag-line {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 8px;
+  }
+
+  /* ── CHECKPOINT ── */
+  .checkpoint {
+    background: rgba(201,168,76,0.08);
+    border: 1px dashed var(--gold-dim);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .checkpoint .cp-icon {
+    font-size: 20px;
+    color: var(--gold);
+    padding-top: 2px;
+  }
+
+  .checkpoint p {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .checkpoint p strong { color: var(--gold-light); font-weight: 600; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+</style>
+</head>
+<body>
+
+<!-- Mobile Toggle -->
+<button id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sidebar-logo">
+    <div class="logo-mark">APEX</div>
+    <div class="logo-sub">Concierge Services</div>
+    <div class="session-badge">New Hire Experience</div>
+  </div>
+
+  <ul id="nav-list">
+    <li><a href="#" onclick="goTo(0)" id="nav-0" class="active">
+      <span class="nav-num">00</span>
+      <span><strong>Opening Experience</strong><span class="nav-time">30–45 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(1)" id="nav-1">
+      <span class="nav-num">01</span>
+      <span><strong>The Apex Standard</strong><span class="nav-time">60 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(2)" id="nav-2">
+      <span class="nav-num">02</span>
+      <span><strong>Professional Presence</strong><span class="nav-time">45 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(3)" id="nav-3">
+      <span class="nav-num">03</span>
+      <span><strong>Operations Foundation</strong><span class="nav-time">90 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(4)" id="nav-4">
+      <span class="nav-num">—</span>
+      <span><strong>Break</strong><span class="nav-time">15 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(5)" id="nav-5">
+      <span class="nav-num">04</span>
+      <span><strong>Real-World Scenarios</strong><span class="nav-time">90 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(6)" id="nav-6">
+      <span class="nav-num">05</span>
+      <span><strong>Accountability & Standards</strong><span class="nav-time">45 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(7)" id="nav-7">
+      <span class="nav-num">06</span>
+      <span><strong>Systems Overview</strong><span class="nav-time">45 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(8)" id="nav-8">
+      <span class="nav-num">07</span>
+      <span><strong>Leadership Seed</strong><span class="nav-time">30 min</span></span>
+    </a></li>
+    <li><a href="#" onclick="goTo(9)" id="nav-9">
+      <span class="nav-num">08</span>
+      <span><strong>Closing Experience</strong><span class="nav-time">30 min</span></span>
+    </a></li>
+  </ul>
+
+  <div id="sidebar-footer">
+    <div>Session Progress</div>
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 0: OPENING EXPERIENCE              -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module active" id="module-0">
+    <div class="module-hero">
+      <div class="opening-crest">✦ A ✦</div>
+      <div class="module-tag">Apex Concierge Services · New Hire Experience</div>
+      <h1>This Is Not<br><em>Just a Job.</em></h1>
+      <p class="hero-sub">You are stepping into a role that demands precision, presence, and professionalism at a level most people never reach. Today is where that begins.</p>
+      <div class="hero-meta">
+        <span>8-Hour Training Session</span>
+        <span>10 Modules</span>
+        <span>Floor-Ready by End of Day</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">Welcome</div>
+      <h2 class="section-title">You Were Selected. Now Earn It.</h2>
+      <p class="body-text">We don't hire casually. Every person in this room passed a screening process designed to identify people with the potential to represent something exceptional. That potential is why you're here. What happens next is up to you.</p>
+      <p class="body-text">Apex Concierge Services operates at the intersection of luxury real estate and elite hospitality. Our clients are high-net-worth residents who expect — and deserve — an experience that matches the caliber of where they live. That experience starts with <em>you</em>.</p>
+
+      <div class="gold-rule"></div>
+
+      <div class="quote-block">
+        <blockquote>"Residents don't remember what you said. They remember how you made them feel."</blockquote>
+        <cite>The Apex Standard</cite>
+      </div>
+
+      <div class="section-label" style="margin-top:40px">What Today Will Do</div>
+      <h2 class="section-title">A Reset, Not an Orientation</h2>
+      <p class="body-text">Most onboardings fill you with paperwork and policies. Today is different. We're going to rebuild how you think about your role — then give you the tools to execute it at the highest level. By the time you leave, you will know exactly who you are on site, what you're expected to do, and how to carry yourself doing it.</p>
+
+      <ul class="step-list">
+        <li>
+          <div class="step-content">
+            <h4>Identity First</h4>
+            <p>You are not just a concierge. You are the face of the building, the standard of the property, and a direct reflection of Apex.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Standards Before Systems</h4>
+            <p>We'll cover the tools, but tools mean nothing without the mindset behind them. We start with who you need to be, not what software you need to use.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Real Situations, Real Decisions</h4>
+            <p>You'll work through actual scenarios you will face on shift — not textbook cases, but the real friction of a luxury residential environment.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Leave Ready</h4>
+            <p>You will end today knowing what your first week looks like, how you'll be evaluated, and exactly what it takes to succeed here.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="reflect-block">
+        <div class="reflect-prompt">"What does professional excellence look like to you — right now, before we begin?"</div>
+        <textarea placeholder="Write your honest answer here. No wrong responses..."></textarea>
+        <div class="reflect-hint">★ Pause & Think — You will revisit this at the end of the day.</div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">⬡ Ground Rule</div>
+        <p>From this moment forward, conduct yourself as if you're already on site. How you engage today is a preview of how you'll operate on shift.</p>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" disabled>← Previous</button>
+      <button class="btn btn-primary" onclick="goTo(1)">The Apex Standard →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 1: THE APEX STANDARD               -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-1">
+    <div class="module-hero">
+      <div class="module-tag">Module 01 · 60 Minutes</div>
+      <h1>The Apex<br><em>Standard</em></h1>
+      <p class="hero-sub">Excellence is not a mood. It's not something you bring when you feel like it. It is the baseline — every shift, every interaction, without exception.</p>
+      <div class="hero-meta">
+        <span>H.O.M.E Values</span>
+        <span>Real vs. Average Service</span>
+        <span>What We Mean by Excellence</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">Defining the Standard</div>
+      <h2 class="section-title">What Apex Is — and Is Not</h2>
+      <p class="body-text">Other concierge services train people to complete tasks. We train people to <em>create experiences</em>. The difference between average and excellent is rarely skill — it's intention. Apex agents are intentional in everything: how they greet, how they respond, how they hold space, and how they leave situations better than they found them.</p>
+
+      <div class="comparison-grid">
+        <div class="comp-col bad">
+          <div class="comp-label">❌ Average Service</div>
+          <ul>
+            <li>Waits to be spoken to</li>
+            <li>Answers questions, does nothing extra</li>
+            <li>"I don't know" — end of conversation</li>
+            <li>Checks phone when lobby is slow</li>
+            <li>Handles the request, forgets the person</li>
+            <li>Tolerates problems instead of resolving them</li>
+            <li>Clocks in, clocks out, disappears in between</li>
+          </ul>
+        </div>
+        <div class="comp-col good">
+          <div class="comp-label">✦ Apex Standard</div>
+          <ul>
+            <li>Acknowledges before being addressed</li>
+            <li>Solves and anticipates the next need</li>
+            <li>"Let me find out" — follows through</li>
+            <li>Engaged, visible, and purposeful always</li>
+            <li>Remembers the person, not just the task</li>
+            <li>Escalates, documents, and closes the loop</li>
+            <li>Present, professional, and consistent all shift</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Core Values</div>
+      <h2 class="section-title">The H.O.M.E Framework</h2>
+      <p class="body-text">Everything we do is anchored in four values. These are not slogans. They are the lens through which every decision, every interaction, and every moment on shift should be filtered.</p>
+
+      <div class="principle-grid">
+        <div class="principle-card">
+          <div class="card-letter">H</div>
+          <h4>Hospitality</h4>
+          <p>Every resident deserves warmth, dignity, and attentiveness — regardless of how they're presenting in the moment. Hospitality is not contingent on how the other person behaves.</p>
+        </div>
+        <div class="principle-card">
+          <div class="card-letter">O</div>
+          <h4>Ownership</h4>
+          <p>If you see it, it's yours. Don't walk past a problem hoping someone else handles it. Take it, solve it, and document it. Your name is on this shift.</p>
+        </div>
+        <div class="principle-card">
+          <div class="card-letter">M</div>
+          <h4>Mindfulness</h4>
+          <p>You are always being observed — by residents, management, cameras, and peers. Mindfulness means awareness: of your environment, your energy, and the impression you leave.</p>
+        </div>
+        <div class="principle-card">
+          <div class="card-letter">E</div>
+          <h4>Excellence</h4>
+          <p>Not perfection — but the relentless pursuit of it. Excellence means you never accept "good enough" when better is possible. In small things and large ones.</p>
+        </div>
+      </div>
+
+      <div class="checkpoint">
+        <div class="cp-icon">⬡</div>
+        <p><strong>Pause & Think:</strong> Which value feels most natural to you right now? Which one will require the most intentional effort? There's no wrong answer — but knowing this is the beginning of self-awareness.</p>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Real vs. Average — Brought to Life</div>
+      <h2 class="section-title">Two Versions of the Same Shift</h2>
+
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <span class="scenario-badge">Scenario</span>
+          <span class="scenario-title">A Resident Returns to the Building Late at Night</span>
+        </div>
+        <div class="scenario-body">
+          <div class="situation">
+            It's 11:45 PM. Mr. Chen, a resident on the 14th floor, walks in through the lobby. He looks tired and distracted. His hands are full with bags from a work trip.
+          </div>
+          <p class="think-prompt">Average Agent Response:</p>
+          <p class="body-text" style="font-size:13px; margin-bottom:16px">Nods slightly. Returns to phone. No words exchanged.</p>
+          <p class="think-prompt">Apex Standard Response:</p>
+          <p class="body-text" style="font-size:13px">Stands slightly. "Good evening, Mr. Chen. Welcome back. Can I grab the door for you?" — Door held, elevator button noted. If he's a familiar face, name used. If not, the effort is the same. He doesn't just arrive — he is received.</p>
+        </div>
+      </div>
+
+      <div class="reflect-block">
+        <div class="reflect-prompt">"Think about a time someone made you feel genuinely valued as a customer or guest. What did they do? Why did it stand out?"</div>
+        <textarea placeholder="Your response here..."></textarea>
+        <div class="reflect-hint">★ The goal: identify the behaviors behind the feeling, then replicate them.</div>
+      </div>
+
+      <div class="leader-statement">
+        <p>Excellence is never accidental. It is the result of habitual intention, practiced daily, even when no one is watching.</p>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(0)">← Opening</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Professional Presence →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 2: PROFESSIONAL PRESENCE           -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-2">
+    <div class="module-hero">
+      <div class="module-tag">Module 02 · 45 Minutes</div>
+      <h1><em>You</em> Are<br>the Experience</h1>
+      <p class="hero-sub">Before you say a single word, residents have already formed an impression. Your appearance, energy, and posture speak first. Make sure they're saying the right things.</p>
+      <div class="hero-meta">
+        <span>Appearance Standards</span>
+        <span>Energy & Posture</span>
+        <span>Tone & Presence</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">First Impressions</div>
+      <h2 class="section-title">The 7-Second Standard</h2>
+      <p class="body-text">Research is consistent: people form a lasting impression within 7 seconds of meeting someone. In luxury residential environments, this matters more than almost anywhere else. The residents you serve chose to live in a premium environment — and you are part of what makes it feel that way.</p>
+
+      <div class="callout">
+        <div class="callout-icon">⬡ Core Principle</div>
+        <p>Your uniform is not clothing — it is a signal. It communicates that this building has standards, and that those standards are upheld by every person who represents it.</p>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Appearance Standards</div>
+      <h2 class="section-title">Non-Negotiables</h2>
+
+      <div class="standard-box">
+        <div class="std-header">⬡ Uniform & Grooming</div>
+        <ul class="standard-list">
+          <li>Uniform clean, pressed, and worn correctly at all times — no exceptions</li>
+          <li>Name badge visible and properly positioned on the left chest</li>
+          <li>Shoes polished or clean, appropriate to the property</li>
+          <li>Grooming: clean, neat, and professional. Hair secured if applicable</li>
+          <li>No visible torn, stained, or wrinkled clothing — ever</li>
+          <li>Minimal fragrance — luxury environments are scent-sensitive</li>
+          <li>No excessive jewelry or accessories that conflict with the professional image</li>
+        </ul>
+      </div>
+
+      <div class="standard-box">
+        <div class="std-header">⬡ Desk & Lobby Presence</div>
+        <ul class="standard-list">
+          <li>Posture: upright, engaged, and approachable — not slouched or leaning</li>
+          <li>Eye contact initiated — not waited for</li>
+          <li>No personal phone at the desk during active shifts</li>
+          <li>Eating at the desk: never during peak hours, never visible to residents</li>
+          <li>Earbuds or headphones: prohibited during active coverage</li>
+          <li>Personal conversations: ended the moment a resident enters your sightline</li>
+        </ul>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Energy & Tone</div>
+      <h2 class="section-title">The Energy You Carry is the Energy You Create</h2>
+      <p class="body-text">Lobby energy is contagious. Residents who walk into a space where the concierge is disengaged, tired, or visibly checked-out feel it immediately — and it colors their entire experience of the building. Agents who are composed, warm, and engaged create an atmosphere of calm professionalism that residents notice and trust.</p>
+
+      <div class="comparison-grid">
+        <div class="comp-col bad">
+          <div class="comp-label">❌ Drains the Lobby</div>
+          <ul>
+            <li>Heavy sighing or visible fatigue</li>
+            <li>Monotone or flat vocal tone</li>
+            <li>Reactive — waits to be addressed</li>
+            <li>Distracted or unfocused</li>
+            <li>Complaining or venting near residents</li>
+          </ul>
+        </div>
+        <div class="comp-col good">
+          <div class="comp-label">✦ Elevates the Lobby</div>
+          <ul>
+            <li>Composed and calm even during stress</li>
+            <li>Warm, clear vocal tone — measured and confident</li>
+            <li>Proactive — acknowledges before asked</li>
+            <li>Fully present, no matter the hour</li>
+            <li>Keeps internal issues internal</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:40px">Voice & Communication</div>
+      <h2 class="section-title">How You Say It Matters as Much as What You Say</h2>
+
+      <ul class="step-list">
+        <li>
+          <div class="step-content">
+            <h4>Greet with Intention</h4>
+            <p>"Good morning / afternoon / evening, [name]" — Always use the time of day. Always use their name when you know it. These are not formalities. They are recognitions of personhood.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>No Slang, No Shortcuts</h4>
+            <p>"Yeah," "Nope," "Sure," "No worries" — These are off-brand. Use: "Of course," "Certainly," "I'd be happy to," "Absolutely." These are not pretentious. They are precise.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>De-escalate Through Tone, Not Just Words</h4>
+            <p>When a resident is upset, your voice is your most powerful tool. Slow down. Lower your pitch slightly. Don't match their energy — anchor it.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Never Say "I Can't"</h4>
+            <p>Replace with: "Let me find someone who can help with that" or "What I can do is..." — Solutions-forward language, always.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="reflect-block">
+        <div class="reflect-prompt">"What part of your professional presence needs the most work? What would a high-performing version of you look like in the lobby?"</div>
+        <textarea placeholder="Be honest. This is for you."></textarea>
+        <div class="reflect-hint">★ Self-awareness is the beginning of change.</div>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(1)">← The Apex Standard</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Operations Foundation →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 3: OPERATIONS FOUNDATION           -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-3">
+    <div class="module-hero">
+      <div class="module-tag">Module 03 · 90 Minutes</div>
+      <h1>Operations<br><em>Foundation</em></h1>
+      <p class="hero-sub">The highest-performing agents in this company are precise operators. They document everything, manage their presence with intention, and never leave a gap in coverage or communication.</p>
+      <div class="hero-meta">
+        <span>E.D.O Shift Logs</span>
+        <span>Desk Standards</span>
+        <span>Site Visibility</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">Shift Logs</div>
+      <h2 class="section-title">Why Documentation Is Not Optional</h2>
+      <p class="body-text">Your shift log is not a formality. It is a <span class="highlight">legal record, a communication tool, and a professional calling card</span> — all in one. What you document (or fail to document) affects property management decisions, incident response, and your own credibility as an agent.</p>
+      <p class="body-text">Multiple audiences read your logs: the next shift agent, your supervisor, the property manager, and in some cases, building ownership or legal teams. Write accordingly.</p>
+
+      <div class="callout">
+        <div class="callout-icon">⬡ Non-Negotiable</div>
+        <p>If it happened on your shift and it isn't documented, it did not happen. Period. Undocumented events are a liability — for you and for the property.</p>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">The Framework</div>
+      <h2 class="section-title">E.D.O — Event, Detail, Outcome</h2>
+      <p class="body-text">Every log entry follows this method. It is simple, consistent, and covers everything that matters.</p>
+
+      <div class="edo-grid">
+        <div class="edo-col">
+          <div class="edo-letter">E</div>
+          <div class="edo-word">Event</div>
+          <div class="edo-desc">What happened? State the incident, interaction, or observation clearly and factually. No opinions, no speculation.</div>
+        </div>
+        <div class="edo-col">
+          <div class="edo-letter">D</div>
+          <div class="edo-word">Detail</div>
+          <div class="edo-desc">Who was involved? What time? What location? What was said or done? The details are what make the log useful and defensible.</div>
+        </div>
+        <div class="edo-col">
+          <div class="edo-letter">O</div>
+          <div class="edo-word">Outcome</div>
+          <div class="edo-desc">How did it resolve? What action did you take? What still requires follow-up? Every entry needs a resolution or a next step.</div>
+        </div>
+      </div>
+
+      <div class="standard-box">
+        <div class="std-header">⬡ E.D.O in Practice — Examples</div>
+        <ul class="standard-list">
+          <li><strong style="color:var(--gold-light)">Weak Log:</strong> "Resident was upset about a package." <span style="color:#e07070">→ Incomplete. No name, no time, no action taken, no outcome.</span></li>
+          <li><strong style="color:var(--gold-light)">Apex Log:</strong> "8:47 PM — Resident in Unit 804 (Mr. Torres) approached desk stating package marked 'delivered' in Yardi was not found in Package Room. Package Room searched — item not located. Management notified via text at 8:52 PM. Carrier contact number provided to resident. Follow-up required morning shift."</li>
+        </ul>
+      </div>
+
+      <div class="reflect-block">
+        <div class="reflect-prompt">Practice: Write an E.D.O log entry for this situation — "A smoke detector alarm triggered on the 8th floor at 11:15 PM. You investigated and found a resident cooking with the door open. The alarm stopped after 3 minutes."</div>
+        <textarea placeholder="Write your E.D.O log entry here: Event... Detail... Outcome..." style="min-height:130px"></textarea>
+        <div class="reflect-hint">★ Use specific language. Write as if you won't be there to explain it.</div>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Desk Standards</div>
+      <h2 class="section-title">The Desk Is Never Abandoned</h2>
+      <p class="body-text">Your desk is the control center of the building's front-of-house operation. When it is unmanned, the building has no face — and no one accountable for whatever walks through the door.</p>
+
+      <div class="standard-box">
+        <div class="std-header">⬡ Desk Coverage Rules</div>
+        <ul class="standard-list">
+          <li>The desk is never left unattended without coordinating relief coverage</li>
+          <li>If you need to leave briefly (restroom, emergency), notify management or a fellow agent</li>
+          <li>Desk area must be clean, organized, and professional at all times</li>
+          <li>All logs and communication must be up to date before any break</li>
+          <li>Handoff to incoming agent includes verbal and written summary — nothing left assumed</li>
+          <li>Never leave mid-incident. If something is active, you see it through before transition</li>
+        </ul>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Visibility on Site</div>
+      <h2 class="section-title">Presence as a Service</h2>
+      <p class="body-text">Your physical presence throughout the building is part of the service. Concierge agents who stay planted behind a desk all shift create blind spots — in security, in resident relations, and in their own awareness of what the property needs.</p>
+
+      <ul class="step-list">
+        <li>
+          <div class="step-content">
+            <h4>Lobby Rounds</h4>
+            <p>Periodic walkthroughs of common areas: lobby, mail room, package room, elevators, and any accessible amenity spaces. Documented in the shift log with any observations.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Proactive Observation</h4>
+            <p>Look for what doesn't belong: lights out in common areas, spills, damaged property, strangers in secure zones, or anything that would concern a resident if they noticed it first.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Elevator Banks & Amenities</h4>
+            <p>During busy hours, visible presence near high-traffic areas adds an extra layer of both security and service. Your presence signals control.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="section-label" style="margin-top:40px">Communication Expectations</div>
+      <h2 class="section-title">Clear, Documented, and Timely</h2>
+
+      <div class="policy-row">
+        <div class="policy-label">Management Updates</div>
+        <div class="policy-value">Any incident, complaint, or unusual event must be communicated to your supervisor before the shift ends — via text, email, or platform message. Do not assume they saw the log.</div>
+      </div>
+      <div class="policy-row">
+        <div class="policy-label">Resident Callbacks</div>
+        <div class="policy-value">If you commit to following up with a resident, it must be documented and tracked. "I'll let you know" with no action taken is worse than not promising anything.</div>
+      </div>
+      <div class="policy-row">
+        <div class="policy-label">Handoff Protocol</div>
+        <div class="policy-value">Verbal briefing to incoming agent. Key open items, pending tasks, active resident situations, and anything the next agent needs to know to start informed.</div>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Professional Presence</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Break →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 4: BREAK                           -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-4">
+    <div class="module-hero" style="min-height:70vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-bottom:1px solid var(--border)">
+      <div class="module-tag" style="justify-content:center">— Scheduled Break —</div>
+      <h1 style="font-size:clamp(48px,6vw,80px); text-align:center">Rest.<br><em>Return Ready.</em></h1>
+      <p class="hero-sub" style="text-align:center; max-width:420px; margin:0 auto">15 minutes. Step away completely. When you return, you return present.</p>
+      <div style="margin-top:40px; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold-dim)">Next: Real-World Scenarios — 90 Min</div>
+    </div>
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(3)">← Operations</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Real-World Scenarios →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 5: REAL-WORLD SCENARIOS            -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-5">
+    <div class="module-hero">
+      <div class="module-tag">Module 04 · 90 Minutes</div>
+      <h1>Real-World<br><em>Scenarios</em></h1>
+      <p class="hero-sub">No simulation covers everything. But how you think through a problem matters more than the perfect script. We'll work through the situations you will actually face — and build your decision-making framework.</p>
+      <div class="hero-meta">
+        <span>Complaints</span>
+        <span>Noise & Smoking</span>
+        <span>Difficult Residents</span>
+        <span>High-Pressure Moments</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">Decision Framework First</div>
+      <h2 class="section-title">The A.C.T. Method</h2>
+      <p class="body-text">Before we run scenarios, you need a framework for when things go sideways. Under pressure, people default to instinct. Your job is to train your instinct to follow this:</p>
+
+      <div class="principle-grid">
+        <div class="principle-card">
+          <div class="card-letter">A</div>
+          <h4>Acknowledge</h4>
+          <p>Recognize what's happening. Name it internally. Do not react — respond. "This resident is upset. My role is to de-escalate, not defend."</p>
+        </div>
+        <div class="principle-card">
+          <div class="card-letter">C</div>
+          <h4>Control</h4>
+          <p>Control the environment, then the conversation. Move to a quieter space if possible. Lower your voice. Create psychological space.</p>
+        </div>
+        <div class="principle-card">
+          <div class="card-letter">T</div>
+          <h4>Transfer or Resolve</h4>
+          <p>Either resolve it directly within your authority, or transfer to the correct escalation point — and document both the action and outcome.</p>
+        </div>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <!-- SCENARIOS -->
+      <div class="section-label">Scenario Work</div>
+      <h2 class="section-title">Think Through These</h2>
+
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <span class="scenario-badge">Scenario 01</span>
+          <span class="scenario-title">The Noise Complaint</span>
+        </div>
+        <div class="scenario-body">
+          <div class="situation">
+            It's 11:30 PM on a Friday. Resident in 6B calls the desk furious — the unit above has been blasting music for two hours. She's demanded action three times already. She's done being polite.
+          </div>
+          <p class="think-prompt">What do you do? Walk through A.C.T.</p>
+          <textarea placeholder="Acknowledge: ... | Control: ... | Transfer or Resolve: ..." style="width:100%; background:var(--navy); border:1px solid var(--border); color:var(--white); font-family:'Barlow',sans-serif; font-size:14px; padding:14px 16px; border-radius:3px; resize:vertical; min-height:90px; outline:none"></textarea>
+          <div style="margin-top:16px; padding:16px; background:rgba(201,168,76,0.06); border-left:2px solid var(--gold-dim); border-radius:0 3px 3px 0">
+            <p class="tag-line">Apex Approach</p>
+            <p style="font-size:13px; color:var(--white-dim); line-height:1.7">Acknowledge her frustration without dismissing it. Go to the floor — knock on 7B, introduce yourself professionally, and address the noise directly but without confrontation. Return to 6B with an update. Document the entire interaction: times, residents, actions, outcome. If the noise continues, escalate to management per protocol. Never promise outcomes you cannot control.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <span class="scenario-badge">Scenario 02</span>
+          <span class="scenario-title">Smoking in a Non-Smoking Building</span>
+        </div>
+        <div class="scenario-body">
+          <div class="situation">
+            You smell cigarette smoke near the 3rd floor stairwell. You find a male guest — not a resident — smoking. He's hostile immediately: "I'm a guest of a resident. You can't tell me what to do."
+          </div>
+          <p class="think-prompt">How do you handle this without escalating — and without backing down?</p>
+          <textarea placeholder="Your approach here..." style="width:100%; background:var(--navy); border:1px solid var(--border); color:var(--white); font-family:'Barlow',sans-serif; font-size:14px; padding:14px 16px; border-radius:3px; resize:vertical; min-height:90px; outline:none"></textarea>
+          <div style="margin-top:16px; padding:16px; background:rgba(201,168,76,0.06); border-left:2px solid var(--gold-dim); border-radius:0 3px 3px 0">
+            <p class="tag-line">Apex Approach</p>
+            <p style="font-size:13px; color:var(--white-dim); line-height:1.7">Stay calm. You are not in a confrontation — you are enforcing a policy that protects all residents. "I understand you're a guest here. This is a non-smoking building — that policy applies to everyone on the property. I'll need to ask you to step outside." If he refuses, do not escalate physically. Retreat, contact management, and document. Your job is not to win — it's to address, record, and escalate appropriately.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <span class="scenario-badge">Scenario 03</span>
+          <span class="scenario-title">The Difficult Resident</span>
+        </div>
+        <div class="scenario-body">
+          <div class="situation">
+            Resident in unit 1202 has a reputation. She regularly makes demands that aren't in scope, speaks condescendingly to staff, and threatens to "call the management company" for any perceived slight. She approaches the desk today clearly agitated.
+          </div>
+          <p class="think-prompt">How do you engage — and protect yourself and the team — without losing your composure or creating a new problem?</p>
+          <textarea placeholder="Your approach here..." style="width:100%; background:var(--navy); border:1px solid var(--border); color:var(--white); font-family:'Barlow',sans-serif; font-size:14px; padding:14px 16px; border-radius:3px; resize:vertical; min-height:90px; outline:none"></textarea>
+          <div style="margin-top:16px; padding:16px; background:rgba(201,168,76,0.06); border-left:2px solid var(--gold-dim); border-radius:0 3px 3px 0">
+            <p class="tag-line">Apex Approach</p>
+            <p style="font-size:13px; color:var(--white-dim); line-height:1.7">Don't alter your baseline because of a reputation. Every interaction starts fresh. Listen fully before responding. Speak clearly and neutrally. Validate her concern without validating poor behavior: "I hear your frustration. Here's what I'm able to do for you right now." If she crosses into abusive territory, you are permitted to calmly redirect: "I want to help you, and I'll be able to do that best if we can keep this conversation respectful." Document everything — tone, words, time, and outcome.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="scenario-card">
+        <div class="scenario-header">
+          <span class="scenario-badge">Scenario 04</span>
+          <span class="scenario-title">Unauthorized Person in the Building</span>
+        </div>
+        <div class="scenario-body">
+          <div class="situation">
+            You notice someone in the lobby who has been sitting for 45 minutes. They did not check in, do not appear to be waiting for a resident, and become vague when asked who they're visiting.
+          </div>
+          <p class="think-prompt">What is your protocol? At what point do you escalate?</p>
+          <textarea placeholder="Your approach here..." style="width:100%; background:var(--navy); border:1px solid var(--border); color:var(--white); font-family:'Barlow',sans-serif; font-size:14px; padding:14px 16px; border-radius:3px; resize:vertical; min-height:90px; outline:none"></textarea>
+          <div style="margin-top:16px; padding:16px; background:rgba(201,168,76,0.06); border-left:2px solid var(--gold-dim); border-radius:0 3px 3px 0">
+            <p class="tag-line">Apex Approach</p>
+            <p style="font-size:13px; color:var(--white-dim); line-height:1.7">Approach professionally and with genuine hospitality — not accusation. "Good afternoon. Can I help you find someone or let a resident know you're here?" If the answer is evasive, inform them the lobby is for residents and authorized guests, and offer to help connect them. If they refuse to leave or cannot be verified, contact management immediately and document the situation. Security is a service — not a confrontation. Treat it as such while still protecting the property.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkpoint">
+        <div class="cp-icon">⬡</div>
+        <p><strong>Key Takeaway:</strong> In every scenario above, notice that the Apex agent never loses composure, never makes a promise they can't keep, and always documents. These are not coincidences — they are trained behaviors.</p>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(4)">← Break</button>
+      <button class="btn btn-primary" onclick="goTo(6)">Accountability & Standards →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 6: ACCOUNTABILITY & STANDARDS      -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-6">
+    <div class="module-hero">
+      <div class="module-tag">Module 05 · 45 Minutes</div>
+      <h1>Accountability<br><em>& Standards</em></h1>
+      <p class="hero-sub">Standards mean nothing without enforcement. Accountability is not a punishment — it is the structure that makes excellence possible. Know the rules. Live by them. Expect them of yourself before anyone else does.</p>
+      <div class="hero-meta">
+        <span>90-Day Expectations</span>
+        <span>Attendance Policy</span>
+        <span>Ownership Mindset</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">The 90-Day Window</div>
+      <h2 class="section-title">This Period Defines Everything</h2>
+      <p class="body-text">Your first 90 days are not probation — they are your foundation. Every habit you build in this period will either serve you or cost you for the rest of your time with Apex. People don't re-define themselves easily after the first 90 days. The behaviors you establish now are the behaviors that follow you.</p>
+
+      <div class="callout">
+        <div class="callout-icon">⬡ Leadership Observation</div>
+        <p>Leadership forms opinions fast. The agent who is consistently on time, engaged, and professional from Day 1 does not have to fight to be taken seriously. The agent who establishes a pattern of inconsistency does — and often it's too late before they realize it.</p>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Attendance Policy</div>
+      <h2 class="section-title">Your Presence Is Your First Responsibility</h2>
+
+      <div class="policy-row">
+        <div class="policy-label">On-Time Standard</div>
+        <div class="policy-value">Scheduled start time means you are in position, in uniform, and ready to receive briefing — not walking in the door. Arrive 10 minutes early as the standard. 5 minutes early is the minimum.</div>
+      </div>
+      <div class="policy-row">
+        <div class="policy-label">Call-Out Protocol</div>
+        <div class="policy-value">Calling out requires direct contact with your supervisor — text or phone — no later than 2 hours before shift start. "Calling out" through a group chat or messaging a coworker does not count and is not accepted.</div>
+      </div>
+      <div class="policy-row">
+        <div class="policy-label">No-Call / No-Show</div>
+        <div class="policy-value">A no-call, no-show is a serious violation. First occurrence triggers a formal conversation. Second occurrence within 90 days may result in termination. There is no exception for "I forgot."</div>
+      </div>
+      <div class="policy-row">
+        <div class="policy-label">Shift Swaps</div>
+        <div class="policy-value">You may arrange a swap with a qualified colleague, but it must be submitted for management approval before the shift — not the night before. Uncleared swaps are not swaps. They are absences.</div>
+      </div>
+      <div class="policy-row">
+        <div class="policy-label">Coverage Responsibility</div>
+        <div class="policy-value">If you are the last on shift and no relief arrives, you do not leave. You contact management immediately. The building cannot go uncovered. Your exit from a shift must be a clean handoff — not a disappearance.</div>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Ownership Mindset</div>
+      <h2 class="section-title">You Are Not a Vendor. You Are a Stakeholder.</h2>
+      <p class="body-text">The agents who advance here — who become leads, who get placed at our most prestigious properties — are the ones who operate like they have a stake in the outcome. They don't wait to be told. They don't do the minimum. They treat every shift like their performance is being assessed — because it is.</p>
+
+      <div class="leader-statement">
+        <p>Ownership means you take responsibility for your shift, your environment, and your impact — before anyone has to ask you to.</p>
+      </div>
+
+      <ul class="step-list">
+        <li>
+          <div class="step-content">
+            <h4>Own Your Shift</h4>
+            <p>Don't count the minutes until you leave. Invest in the hours you're there. Find what needs to be done and do it. The agents who are noticed are the ones who find the problem no one assigned them.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Own Your Mistakes</h4>
+            <p>If you make an error — and you will — own it immediately. Bring it to your supervisor with a proposed solution. Hiding mistakes makes them bigger. Addressing them builds trust.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>Own Your Development</h4>
+            <p>Ask questions. Seek feedback. Study the property. Know the residents' names. Know the building systems. The agent who treats this as a learning environment grows fast. The one who coasts stays stagnant.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="reflect-block">
+        <div class="reflect-prompt">"What does taking full ownership of your role look like in practice, for you, on your first week?"</div>
+        <textarea placeholder="Be specific. What will you actually do differently?"></textarea>
+        <div class="reflect-hint">★ Vague intentions produce vague results.</div>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(5)">← Real-World Scenarios</button>
+      <button class="btn btn-primary" onclick="goTo(7)">Systems Overview →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 7: SYSTEMS OVERVIEW                -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-7">
+    <div class="module-hero">
+      <div class="module-tag">Module 06 · 45 Minutes</div>
+      <h1>Systems<br><em>Overview</em></h1>
+      <p class="hero-sub">The tools are secondary to the standards. But you need to know what you're working with. This is a high-level introduction — what each system does, what you need from Day 1, and what can be learned over time.</p>
+      <div class="hero-meta">
+        <span>Connecteam</span>
+        <span>Paylocity</span>
+        <span>Yardi / Packages</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">Priority Framework</div>
+      <h2 class="section-title">What Matters Day 1 vs. What Can Wait</h2>
+      <p class="body-text">Don't let an unfamiliar system become a reason to underperform. You will not master everything today — and you don't need to. Focus on what is essential to function on your first shift. The rest will be trained with time and repetition.</p>
+
+      <div class="callout">
+        <div class="callout-icon">⬡ Day 1 Priority</div>
+        <p>Connecteam (schedule and communication) and basic Yardi package functions are what you need operational on Day 1. Everything else is additive.</p>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Platform Overview</div>
+      <h2 class="section-title">Your Operational Tools</h2>
+
+      <div class="system-card">
+        <div class="sys-icon">C</div>
+        <div class="sys-content">
+          <h4>Connecteam</h4>
+          <p>Your primary operations platform. Used for: shift scheduling and clock-in/out, team communication and announcements, task checklists and shift reports, and direct messaging with management. This is where your professional digital footprint lives. Keep it professional.</p>
+          <div class="sys-priority">★ Day 1 Essential — Set up immediately</div>
+        </div>
+      </div>
+
+      <div class="system-card">
+        <div class="sys-icon">P</div>
+        <div class="sys-content">
+          <h4>Paylocity</h4>
+          <p>Payroll and HR platform. Used for: accessing your pay stubs and tax documents, updating personal information, tracking paid time off. You will not use this operationally on shift — but you should set it up this week. Questions about pay go through Paylocity first, not to your supervisor.</p>
+          <div class="sys-priority">○ Complete setup within your first 3 days</div>
+        </div>
+      </div>
+
+      <div class="system-card">
+        <div class="sys-icon">Y</div>
+        <div class="sys-content">
+          <h4>Yardi — Package Management</h4>
+          <p>Property management system used primarily for package intake and logging. On shift, you will log incoming packages with carrier, resident name, unit number, and timestamp. Residents use it to check package status. Accuracy here is critical — missing or mislabeled packages create resident complaints. You will receive hands-on training for this at your site.</p>
+          <div class="sys-priority">★ Day 1 Functional — Site training provided</div>
+        </div>
+      </div>
+
+      <div class="system-card">
+        <div class="sys-icon">+</div>
+        <div class="sys-content">
+          <h4>Site-Specific Systems</h4>
+          <p>Each property may have additional tools: visitor management platforms, elevator or access control systems, amenity booking platforms. Your site lead will walk you through these during property orientation. Do not assume your previous experience with a similar system applies here — confirm the protocol at your specific site.</p>
+          <div class="sys-priority">○ Learn on-site, week one</div>
+        </div>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">The Non-Technical Rule</div>
+      <h2 class="section-title">Technology Never Replaces Judgment</h2>
+      <p class="body-text">Systems go down. Software glitches. Logins fail. When that happens, the standard does not lower — you adapt. The agent who says "the system was down" as an excuse for incomplete documentation has not internalized this. Your judgment, professionalism, and documentation instincts are the foundation. The tools are built on top of them.</p>
+
+      <div class="checkpoint">
+        <div class="cp-icon">⬡</div>
+        <p><strong>Before you leave today:</strong> Confirm that your Connecteam login is active. If you have not received access, flag it now — not on your first shift.</p>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(6)">← Accountability</button>
+      <button class="btn btn-primary" onclick="goTo(8)">Leadership Seed →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 8: LEADERSHIP SEED                 -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-8">
+    <div class="module-hero">
+      <div class="module-tag">Module 07 · 30 Minutes</div>
+      <h1>The<br><em>Leadership Seed</em></h1>
+      <p class="hero-sub">This is not the leadership module you expected. It is not about titles or promotions. It is about something that starts today — whether you intend it to or not.</p>
+      <div class="hero-meta">
+        <span>People Are Already Watching</span>
+        <span>How Leaders Think Early</span>
+        <span>Setting the Tone</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">The Uncomfortable Truth</div>
+      <h2 class="section-title">You Are Already Leading</h2>
+      <p class="body-text">From the moment you put on that uniform and step into a building, you are being observed. By residents. By vendors. By your peers. By management. The way you carry yourself, the standard you set through your behavior, the energy you bring to a slow shift — these things are noticed. And they are remembered.</p>
+      <p class="body-text">You are not waiting to become a leader. You are demonstrating leadership — or the absence of it — right now. The question is only whether you're doing it intentionally.</p>
+
+      <div class="quote-block">
+        <blockquote>"Leadership is not a position. It is a behavior that others choose to follow."</blockquote>
+        <cite>The Apex Standard</cite>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">What Early Leaders Do</div>
+      <h2 class="section-title">The Behaviors That Get Noticed</h2>
+
+      <ul class="step-list">
+        <li>
+          <div class="step-content">
+            <h4>They Raise the Floor, Not Just Their Own Bar</h4>
+            <p>When a high performer operates at a standard, others around them often rise to meet it — even without being asked. Your consistency becomes a silent form of coaching. Never underestimate the influence of modeling excellence.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>They Solve, Don't Complain</h4>
+            <p>Every shift has friction. Agents who spend their energy on grievances stagnate. Agents who redirect that energy toward solutions get trusted with more responsibility — and more opportunity.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>They Know the Property Cold</h4>
+            <p>Building knowledge is a form of authority. The agent who knows every amenity space, every elevator bank, every vendor protocol, and every resident's name becomes indispensable — because they're the person everyone asks.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>They Protect the Culture</h4>
+            <p>Apex agents do not tolerate shortcuts, gossip, or low standards from their peers — not loudly, not aggressively, but through the steady example of doing things the right way, every time.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <h4>They Ask For Feedback Before It's Offered</h4>
+            <p>The agents who grow fastest are the ones who actively seek to be corrected. This is not weakness — it is intelligence. It communicates to leadership: this person wants to get better. That person gets invested in.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Setting the Tone on Shift</div>
+      <h2 class="section-title">Your Shift Starts Before It Starts</h2>
+      <p class="body-text">How you arrive sets the tone for the next 8 hours. The agent who comes in distracted, underprepared, or visibly uninterested poisons the well before the first resident interaction. The agent who arrives composed, informed, and ready sends the opposite signal — to their team, to residents, and to themselves.</p>
+
+      <div class="standard-box">
+        <div class="std-header">⬡ Pre-Shift Mindset Checklist</div>
+        <ul class="standard-list">
+          <li>Leave personal stress outside. It does not belong in the lobby.</li>
+          <li>Review your log handoff from the previous shift before anything else</li>
+          <li>Confirm your uniform is correct and your appearance is professional</li>
+          <li>Mentally identify 1–2 things you intend to do differently or better than last shift</li>
+          <li>Arrive with the posture you want to keep for the next 8 hours</li>
+        </ul>
+      </div>
+
+      <div class="leader-statement">
+        <p>The future site leaders at Apex are sitting somewhere in our company right now — performing well, operating with integrity, and not waiting to be asked.</p>
+      </div>
+
+      <div class="reflect-block">
+        <div class="reflect-prompt">"What kind of agent do you want to be known as within your first 6 months? And what would you need to do consistently, starting this week, to earn that reputation?"</div>
+        <textarea placeholder="Think beyond the job. Think about your identity here."></textarea>
+        <div class="reflect-hint">★ Reputation is built in small moments, compounded over time.</div>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(7)">← Systems Overview</button>
+      <button class="btn btn-primary" onclick="goTo(9)">Closing Experience →</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- MODULE 9: CLOSING EXPERIENCE              -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="module" id="module-9">
+    <div class="module-hero">
+      <div class="module-tag">Module 08 · 30 Minutes</div>
+      <h1>Are You<br><em>All In?</em></h1>
+      <p class="hero-sub">This is not the end of the training. It is the beginning of everything you are going to build here. And it starts with a choice only you can make.</p>
+      <div class="hero-meta">
+        <span>Recommitment</span>
+        <span>Clear Expectations</span>
+        <span>Day 1 Begins Now</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+      <div class="section-label">What You've Covered Today</div>
+      <h2 class="section-title">Eight Hours. One Standard.</h2>
+      <p class="body-text">Today was designed to do one thing: give you the clearest possible picture of what excellence looks like at Apex Concierge Services — so that you can choose, intentionally, to pursue it.</p>
+      <p class="body-text">You've built your H.O.M.E. values. You've practiced your E.D.O documentation. You've worked through the scenarios you'll face on shift. You've built a decision-making framework for high-pressure moments. You know the standards. You know the policies. You know what leadership looks like from Day 1.</p>
+      <p class="body-text">What you do with that is entirely up to you.</p>
+
+      <div class="quote-block">
+        <blockquote>"Excellence is a choice made consistently, in small moments, when no one is asking."</blockquote>
+        <cite>The Apex Standard</cite>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">Before Your First Shift</div>
+      <h2 class="section-title">Clear Expectations for Day 1</h2>
+
+      <div class="standard-box">
+        <div class="std-header">⬡ Your First Shift Checklist</div>
+        <ul class="standard-list">
+          <li>Confirm Connecteam access — log in, confirm your scheduled shift, set notifications</li>
+          <li>Review the property-specific orientation materials provided by your site lead</li>
+          <li>Know your site address, access points, and parking/arrival protocol</li>
+          <li>Arrive at least 10 minutes before your scheduled shift time — in uniform</li>
+          <li>Receive verbal handoff from the departing agent — write down any open items</li>
+          <li>Introduce yourself to your site lead if you haven't already</li>
+          <li>Document your first log entry before the shift is an hour old</li>
+          <li>At end of shift: complete log, conduct handoff, and clock out correctly</li>
+        </ul>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <div class="section-label">One More Thing</div>
+      <h2 class="section-title">Go Back to What You Wrote This Morning</h2>
+      <p class="body-text">At the beginning of today, you answered a question: <em>"What does professional excellence look like to you — right now, before we begin?"</em></p>
+      <p class="body-text">Read what you wrote. Then answer again — with everything you've learned today behind your words.</p>
+
+      <div class="reflect-block">
+        <div class="reflect-prompt">"What does professional excellence look like to you now — and what is the first concrete action you will take to pursue it?"</div>
+        <textarea placeholder="This is your answer after today. Make it count." style="min-height:120px"></textarea>
+        <div class="reflect-hint">★ The difference between this answer and your first answer is your growth today.</div>
+      </div>
+
+      <div class="gold-rule"></div>
+
+      <!-- COMMITMENT MOMENT -->
+      <div class="commitment-block">
+        <h3>The Apex Commitment</h3>
+        <p>Sign your name below — not because it is required, but because you are choosing, deliberately, to hold yourself to this standard.</p>
+
+        <input type="text" class="commitment-input" placeholder="Your full name" autocomplete="off">
+
+        <p style="font-size:13px; color:var(--white-muted); margin-top:8px; text-align:center; font-style:italic">"I commit to bringing my best — consistently, intentionally, and without compromise — to every shift I carry the Apex name."</p>
+
+        <div style="margin-top:28px; padding-top:24px; border-top:1px solid var(--border)">
+          <div style="font-family:'Cormorant Garamond', serif; font-size:40px; color:var(--gold); opacity:0.4; margin-bottom:8px">✦ A ✦</div>
+          <div style="font-family:'Barlow Condensed', sans-serif; font-size:11px; letter-spacing:0.3em; text-transform:uppercase; color:var(--white-muted)">Apex Concierge Services · New Hire Experience Complete</div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:32px">
+        <div class="callout-icon">⬡ A Message From Leadership</div>
+        <p>We don't invest in training like this for everyone. We built this experience for people we believe in. You are here because we saw something in you. Now go show us — and everyone in those buildings — exactly who you are.</p>
+      </div>
+    </div>
+
+    <div class="module-nav">
+      <button class="btn btn-ghost" onclick="goTo(8)">← Leadership Seed</button>
+      <button class="btn btn-primary" onclick="restartExperience()">Begin Again ↺</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  let currentModule = 0;
+  const totalModules = 10;
+
+  function goTo(index) {
+    // Deactivate all modules
+    document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('#nav-list a').forEach(a => a.classList.remove('active'));
+
+    // Activate target
+    document.getElementById('module-' + index).classList.add('active');
+    document.getElementById('nav-' + index).classList.add('active');
+    currentModule = index;
+
+    // Update progress
+    const percent = Math.round(((index + 1) / totalModules) * 100);
+    document.getElementById('progress-fill').style.width = percent + '%';
+
+    // Scroll main to top
+    document.getElementById('main').scrollTop = 0;
+    window.scrollTo(0, 0);
+
+    // Close sidebar on mobile
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  function restartExperience() {
+    goTo(0);
+    // Clear all textareas
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' && currentModule < totalModules - 1) {
+      goTo(currentModule + 1);
+    }
+    if (e.key === 'ArrowLeft' && currentModule > 0) {
+      goTo(currentModule - 1);
+    }
+  });
+</script>
+
+</body>
+</html>
